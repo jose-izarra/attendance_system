@@ -1,0 +1,37 @@
+---
+export interface Props {
+  name: string;
+  body: string;
+  active: boolean;
+}
+
+const { name, body, active } = Astro.props;
+---
+{active ? 
+    <a href="" class="w-[80%] my-2">
+      <div class="h-fit w-[100%] bg-slate-100 shadow-xl rounded-xl p-7">
+        <h2 class="text-center"> {name} </h2>
+        <p class="text-center">Click to mark as present</p>
+      </div>
+    </a>
+    
+    :   
+
+    <a>
+      <div class="h-fit w-[80%] bg-slate-100 shadow-xl rounded-xl p-7">
+        <h2 class="text-center">You have no classes at this Time</h2>
+        <p class="text-center">Come back later during your class</p>
+      </div>
+    </a>
+}
+<script>
+
+</script>
+
+<style>
+
+h2 {
+    font-size: 40px;
+}
+
+</style>
