@@ -4,18 +4,30 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout title="Attendance System">
-	<main>
-
-	</main>
+    <main>
+        <nav class="bg-blue-500 w-full">
+            <div class="container mx-auto flex items-center justify-between">
+                <div class="text-white text-2xl font-bold">
+                    Attendance System
+                </div>
+                <ul class="flex space-x-4">
+                    <li><a href="#" class="text-white">Home</a></li>
+                    <li><a href="#" class="text-white">About</a></li>
+                    <li><a href="#" class="text-white">Services</a></li>
+                    <li><a href="#" class="text-white">Contact</a></li>
+                </ul>
+            </div>
+        </nav>
+		<section class="h-48 flex flex-col text-left pt-10 pl-20">
+			<h1 class="text-2xl font-bold text-left">Hello Student</h1>
+			<p class="text-left">Check your attendance below</p>
+		</section>
+    </main>
 </Layout>
 
 <style>
 	main {
-		margin: auto;
-		padding: 1rem;
-		width: 800px;
-		max-width: calc(100% - 2rem);
-		color: white;
+		color: rgb(0, 0, 0);
 		font-size: 20px;
 		line-height: 1.6;
 	}
@@ -24,7 +36,5 @@ import Layout from '../layouts/Layout.astro';
 		font-size: 4rem;
 		font-weight: 700;
 		line-height: 1;
-		text-align: center;
-		margin-bottom: 1em;
 	}
 </style>
