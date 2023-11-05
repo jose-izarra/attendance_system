@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import NavBar from '../components/NavBar.astro';
 import ClassCard from '../components/ClassCard.astro';
+import UpcomingClass from '../components/UpcomingClass.astro';
 ---
 
 <Layout title="Attendance System">
@@ -12,15 +13,24 @@ import ClassCard from '../components/ClassCard.astro';
 		<section class="h-48 flex flex-col text-left pt-10">
 			<h1 class="text-2xl font-bold text-left pb-3">Hello Student</h1>
 			<p class="text-left">Check your attendance below </p>
-			<h3 class="pt-10">Active Classes:</h3>
+			<h3 class="pt-10">Active Class:</h3>
 			<ClassCard active={true} name="<<Class Name>>" body="Hello world" />
 			
 		</section>
 
 		<!-- Upcoming Classes Section -->
 		<section>
-			<h3 class="">Upcoming Classes: </h3>
+			<h3 class="pb-2">Upcoming Classes:</h3>
+			<UpcomingClass n_classes={4}/> 
 		</section>
+
+
+		<!-- for milestone 2, lets add this text to be able to switch between pages -->
+		<!-- Link isnt working for some reason, find out why -->
+		<section>
+			<h2><a href="./professor/index.astro">Go to Professor page</a></h2>
+		</section>
+
     </main>
 </Layout>
 
