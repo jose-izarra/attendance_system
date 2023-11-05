@@ -5,13 +5,14 @@ export interface Props {
   active: boolean;
 }
 
-const { name, body, active } = Astro.props;
+const { name, active } = Astro.props;
 ---
+<!-- checks if there is a class going on right now, passed on as a prop in index.astro -->
 {active ? 
     <a href="" class="w-[80%] my-2">
       <div class="h-fit w-[100%] bg-slate-100 shadow-xl rounded-xl p-7">
         <h2 class="text-center"> {name} </h2>
-        <p class="text-center">Click to mark as present</p>
+        <p class="text-center">Click to scan or input code</p>
       </div>
     </a>
     
@@ -19,8 +20,8 @@ const { name, body, active } = Astro.props;
 
     <a>
       <div class="h-fit w-[80%] bg-slate-100 shadow-xl rounded-xl p-7">
-        <h2 class="text-center">You have no classes at this Time</h2>
-        <p class="text-center">Come back later during your class</p>
+        <h2 class="text-center">No Classes at this Time</h2>
+        <p class="text-center">Check your Upcoming Classes Below</p>
       </div>
     </a>
 }
