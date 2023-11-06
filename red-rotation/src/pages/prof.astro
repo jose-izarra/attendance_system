@@ -1,0 +1,42 @@
+---
+import Layout from '../layouts/Layout.astro';
+import NavBar from '../components/NavBar.astro';
+import ClassCard from '../components/ClassCard.astro';
+const randomNum = Math.floor(100000 + Math.random() * 900000).toString();
+---
+
+
+
+<Layout title="Attendance System">
+    <main>
+        <NavBar />
+        <section class="h-48 flex flex-col text-left pt-10">
+			<h1 class="text-2xl font-bold text-left pb-3">Hello Professor</h1>
+			<p class="text-left">Code for this lesson:</p>
+            <ClassCard active={false} name="<<Class Name>>" body="Hello world" />
+		</section>
+    </main>
+</Layout>
+<style>
+	main {
+		color: rgb(0, 0, 0);
+		font-size: 20px;
+		line-height: 1.6;
+	}
+	section {
+		margin-left: 10rem;
+		padding-left: 5rem;
+		padding-bottom: 2rem;
+		block-size: fit-content;
+	}
+
+
+	h1 {
+		font-size: 4rem;
+		font-weight: 700;
+		line-height: 1;
+	}
+</style>
+
+
+

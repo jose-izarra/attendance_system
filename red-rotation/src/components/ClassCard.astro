@@ -6,6 +6,7 @@ export interface Props {
 }
 
 const { name, active } = Astro.props;
+const randomNum = Math.floor(100000 + Math.random() * 900000).toString();
 ---
 <!-- checks if there is a class going on right now, passed on as a prop in index.astro -->
 {active ? 
@@ -20,8 +21,8 @@ const { name, active } = Astro.props;
 
     <a>
       <div class="h-fit w-[80%] bg-slate-100 shadow-xl rounded-xl p-7">
-        <h2 class="text-center">No Classes at this Time</h2>
-        <p class="text-center">Check your Upcoming Classes Below</p>
+        <h2 class="text-center">{randomNum}</h2>
+        <p class="text-center">Please Check in!</p>
       </div>
     </a>
 }
