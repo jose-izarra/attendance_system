@@ -25,9 +25,9 @@ app.get("/select", (req, res) => {
 
 
 app.get("/insert", (req, res) => {
-    const email = 'zalsaheb.ieu2022@student.ie.edu';
-    const password = 'hispassword';
-    const myname = 'Zaid Nopicture'
+    const email = 'jizarra.ieu2022@student.ie.edu';
+    const password = 'mypassword';
+    const myname = 'Jose Izarra'
 
     db.query("INSERT INTO students (email, password, name) VALUES (?, ?, ?)",
     [email, password, myname],
