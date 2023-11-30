@@ -4,6 +4,7 @@ import json
 import logging
 import os
 import random
+import requests
 
 app = func.FunctionApp()
 
@@ -32,7 +33,8 @@ def random_code_generator():
     return random.randint(100000, 999999)
 
 def send_code_to_astro_website(code):
-    return
+    response = requests.post("http://astro-website.com/api/sendcode", data={"code": code})
+    return response.json()
 
 def verify_code_and_credentials(received_code, generated_code, credentials):
     if received_code != generated_code:
@@ -46,4 +48,3 @@ def send_error_message_to_astro():
 def send_to_dead_letter_queue(data):
 
 def main():
-    
