@@ -2,6 +2,8 @@ import azure.functions as func
 import datetime
 import json
 import logging
+import os
+import random
 
 app = func.FunctionApp()
 
@@ -25,3 +27,6 @@ def addToDB(req: func.HttpRequest) -> func.HttpResponse:
              "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.",
              status_code=200
         )
+
+def random_code_generator():
+    return random.randint(100000, 999999)
