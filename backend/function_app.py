@@ -1,9 +1,7 @@
 import azure.functions as func
 import logging
-from verifyCode import verifyCode
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
-app.register_blueprint(verifyCode)
 
 @app.route(route="addToDB")
 def addToDB(req: func.HttpRequest) -> func.HttpResponse:
