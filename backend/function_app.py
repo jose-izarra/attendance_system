@@ -3,59 +3,100 @@ import logging
 import datetime
 import json
 import os
-import random
 import requests
-import pyodbc
+import pymysql
 from azure.servicebus import ServiceBusClient
+from time import sleep
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
 @app.route(route="addToDB")
 def addToDB(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('ADDTODB Python HTTP trigger function processed a request.')
-
-    name = req.params.get('name')
-    if not name:
-        try:
-            req_body = req.get_json()
+    
+    logging.info(os.environ['user'])
+    logging.info(os.environ['password'])
+    logging.info(os.environ['host'])
+    
+    user = os.environ.get("user")
+    password = os.environ.get("password")
+    host = os.environ.get("host")
+    database = os.environ.get("db")
+    
+    if user and password and host and database:
+        try: 
+            cnx = pymysql.connect(user=user, password=password,
+                                        host=host, database=database)
+            if cnx.open:
+                
+                cursor = cnx.cursor()
+                logging.info("=== Testing connection to database")
+                
+                query = 'SELECT * from CC_5;'
+                logging.info(query)
+                
+                rs=cursor.execute(query)
+                rs=cursor.fetchall()
+                logging.info(rs)
+            
         except ValueError:
             pass
-        else:
-            name = req_body.get('name')
+    else:
+        logging.info("Local settings variables couldn't be found")
+        
+    if rs:
+        return func.HttpResponse(f"Successfully added. \n{rs}")
+    else:
+        return func.HttpResponse(f"HTTP triggered successfully. Data not added", status_code=200)
+"""
+name = req.params.get('name')
+if not name:
+    try:
+        req_body = req.get_json()
+    except ValueError:
+        pass
+    else:
+        name = req_body.get('name')
 
-    if name:
-        return func.HttpResponse(f"Hello, {name}. This HTTP triggered function executed successfully.")
+if name:
+    return func.HttpResponse(f"Hello, {name}. This HTTP triggered function executed successfully.")
+else:
+    return func.HttpResponse(
+            "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.",
+            status_code=200
+    )
+"""
+        
+  
+@app.route(route="createCode")
+def createCode(req: func.HttpRequest) -> func.HttpResponse:
+    # this function will be called by the professor to initialize the code every 30 seconds
+    import random
+    logging.info('VERIFYCODE Python HTTP trigger function processed a request.')
+    code = random.randint(100000, 999999)
+    
+    # send to front end to display
+    
+    if code:
+        return func.HttpResponse(f"This HTTP triggered function executed successfully.\nRandom code generated: {code}")
     else:
         return func.HttpResponse(
-             "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.",
+             "HTTP triggered function executed successfully. Code wasn't passed successfully",
              status_code=200
         )
-        
         
 @app.route(route="verifyCode")
 def verifyCode(req: func.HttpRequest) -> func.HttpResponse:
-    logging.info('VERIFYCODE Python HTTP trigger function processed a request.')
+    logging.info("VERIFYCODE function")
+    
+    studentInput = req.params.get('studentInput')
 
-    name = req.params.get('name')
-    if not name:
-        try:
-            req_body = req.get_json()
-        except ValueError:
-            pass
-        else:
-            name = req_body.get('name')
+    # Service bus to get the current output code of the 
+        
+    return func.HttpResponse("Hello")
 
-    if name:
-        return func.HttpResponse(f"Hello, {name}. This HTTP triggered function executed successfully.")
-    else:
-        return func.HttpResponse(
-             "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.",
-             status_code=200
-        )
-        
-        
-def random_code_generator():
-    return random.randint(100000, 999999)
+# def random_code_generator():
+#     return random.randint(100000, 999999)
 
 def send_code_to_frontend(code):
     response = requests.post("http://astro-website.com/api/sendcode", data={"code": code})
@@ -96,5 +137,4 @@ def main():
     result = verify_code_and_credentials(received_code, generated_code, credentials)
     print(result)
     
-if __name__ == "__main__":
-    main()
+
