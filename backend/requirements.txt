@@ -5,3 +5,4 @@
 azure-functions
 azure-servicebus
 mysql.connector
+azure-cosmos
