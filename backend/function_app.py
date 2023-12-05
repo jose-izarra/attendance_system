@@ -407,6 +407,12 @@ def sendCode(req: func.HttpRequest) -> func.HttpResponse:
     CURRENT_CODE = gen_code()
     logging.info(f'------ CURRENT_CODE: {CURRENT_CODE}')
     
+    # get inputs
+    # inputs: course_code
+    
+    class_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")[0:10]
+    course_code = req.params.get('course_code') 
+    
     # this function will be called by the professor to initialize the code every 30 seconds
     try:
         connection = mysql.connector.connect(**db_details)
@@ -415,9 +421,14 @@ def sendCode(req: func.HttpRequest) -> func.HttpResponse:
             logging.info("------- Connected to database")
             
             cursor = connection.cursor()
-
-            update_code(cursor, class_date, course_id, current_code)
+            
+            course_id = get_course_id(cursor, course_code)
+            update_code(cursor, class_date, course_id, CURRENT_CODE)
             connection.commit()
+            
+            current_code = get_code_from_db(cursor, class_date, course_id)
+            logging.info(f'------ current_code: {current_code}')
+            
             logging.info('-------- Query executed correctly')
             
     except mysql.connector.Error as e:
@@ -435,7 +446,6 @@ def sendCode(req: func.HttpRequest) -> func.HttpResponse:
         else:
             return func.HttpResponse(f'Something didn\'t go well')
     
-    return func.HttpResponse('didnt connect to db correctly')
 
 
 def markPresent(cursor, attendance_val, student_id, class_date):
@@ -509,7 +519,7 @@ def verifyCode(req: func.HttpRequest) -> func.HttpResponse:
                 task["CurrentCode"] = current_code
                 
                 table_client.upsert_entity(entity=task)
-                loggign.info('-------- Data sent to storage')
+                logging.info('-------- Data sent to storage')
                 
             else:
                 message = func.HttpResponse(f'-------- Code is incorrect')
