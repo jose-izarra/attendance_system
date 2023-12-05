@@ -6,6 +6,7 @@ import UpcomingClass from './components/UpcomingClass'; // Assuming UpcomingClas
 import './App.css';
 import SignUpForm from './components/signUpForm';
 import LoginForm from "./components/loginForm";
+import VerifyCodeForm from "./components/verifycode";
 
 // Define the component
 const AttendanceSystem = () => {
@@ -28,6 +29,7 @@ const AttendanceSystem = () => {
             </section>
             <SignUpForm />
             <LoginForm />
+            <VerifyCodeForm />
 
             <section style={styles.section}>
                 <h2><Link to="/prof">Go to Professor page</Link></h2>
