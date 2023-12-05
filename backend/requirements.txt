@@ -4,4 +4,7 @@
 
 azure-functions
 azure-servicebus
-pymysql
+mysql.connector
+azure-cosmos
+azure-data-tables
+azure-storage-queue
