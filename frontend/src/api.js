@@ -197,15 +197,17 @@ export async function verifyCode(studentInput) {
     }
 }
 
-export async function sendCode() {
+export async function sendCode(courseCode) {
     try {
-        // Specify the API endpoint
-        const url = 'https://attendancesystemcc1.azurewebsites.net/api/sendCode';
+        // Construct the URL with query parameters
+        const queryParams = new URLSearchParams({ course_code: courseCode }).toString();
+        const url = `https://attendancesystemcc1.azurewebsites.net/api/sendCode?${queryParams}`;
 
-        // Make a GET request to the server
-        const response = await fetch(url, { method: 'GET' });
+        // Make the GET request
+        const response = await fetch(url, {
+            method: 'GET',
+        });
 
-        // Check if the response is successful
         if (!response.ok) {
             throw new Error(`HTTP Error: ${response.status}`);
         }
@@ -213,13 +215,17 @@ export async function sendCode() {
         // Parse the JSON response
         const data = await response.json();
 
-        // Return the JSON data directly
-        return data;
+        return {
+            status: 200,
+            body: data
+        };
     } catch (error) {
-        // Handle any errors that occurred during the fetch
-        console.error("Error calling the Azure Function:", error);
-
-        // You can throw an error or return an error object as needed
-        throw new Error(`There was an error calling the Azure Function: ${error.message}`);
+        return {
+            status: 500,
+            body: {
+                error: `There was an error calling the Azure Function: ${error.message}`
+            }
+        };
     }
 }
+

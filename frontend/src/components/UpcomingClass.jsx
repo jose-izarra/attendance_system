@@ -28,16 +28,17 @@ const UpcomingClasses = ({ n_classes }) => {
 const styles = {
     li: {
         display: 'flex',
-        alignItems: 'center',
+        alignItems: 'auto',
         width: '80%',
         height: '2.5rem',
         borderRadius: '0.75rem',
         borderWidth: '1px',
         padding: '2rem 0 2rem 0.75rem',
-        margin: '0.25rem 0',
+        margin: '1rem',
         background: '#f8fafc', // bg-slate-100
         boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.05)', // shadow-md
     },
 };
+
 
 export default UpcomingClasses;

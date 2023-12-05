@@ -46,16 +46,19 @@ const styles = {
         lineHeight: 1.6,
     },
     section: {
-        marginLeft: '10rem',
-        paddingLeft: '5rem',
+        margin: 'auto',
+        paddingLeft: '2rem',
         paddingBottom: '2rem',
         blockSize: 'fit-content',
     },
     h1: {
+        color: 'rgb(0,0,0)',
         fontSize: '4rem',
         fontWeight: 700,
         lineHeight: 1,
     },
+
+    // Add other styles as needed
     // Add other styles as needed
 };
 
