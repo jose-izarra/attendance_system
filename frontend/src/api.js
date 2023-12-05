@@ -1,23 +1,18 @@
 export async function signUp({ name, email, password, student }) {
     try {
-        const url = 'https://attendancesystemcc1.azurewebsites.net/api/signUp';
+        // Encode each parameter separately
+        const encodedName = encodeURIComponent(name);
+        const encodedEmail = encodeURIComponent(email);
+        const encodedPassword = encodeURIComponent(password);
+        const encodedStudent = encodeURIComponent(student);
 
-        const requestBody = {
-            name: name,
-            email: email,
-            password: password,
-            student: student
-        };
+        // Construct the query string using the encoded parameters
+        const queryParams = `name=${encodedName}&email=${encodedEmail}&password=${encodedPassword}&student=${encodedStudent}`;
+        const url = `https://attendancesystemcc1.azurewebsites.net/api/signUp?${queryParams}`;
 
         const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-
-            },
-            body: JSON.stringify(requestBody)
+            method: 'GET',
         });
-
 
         if (!response.ok) {
             throw new Error(`Error: ${response.status}`);
@@ -51,7 +46,7 @@ export async function login({ email, password, student }) {
         };
 
         const response = await fetch(url, {
-            method: 'POST', 
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
