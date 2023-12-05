@@ -39,7 +39,6 @@ export async function signUp({ name, email, password, student }) {
     }
 }
 
-
 export async function login({ email, password, student }) {
     try {
         const url = 'https://attendancesystemcc1.azurewebsites.net/api/login';
@@ -78,7 +77,6 @@ export async function login({ email, password, student }) {
         };
     }
 }
-
 
 export async function addNewCourse({ course_code, course_name, prof_email }) {
     try {
@@ -119,7 +117,6 @@ export async function addNewCourse({ course_code, course_name, prof_email }) {
     }
 }
 
-
 export async function addNewStudent({ student_email, course_code }) {
     try {
         const url = 'https://attendancesystemcc1.azurewebsites.net/api/addNewStudent';
@@ -157,7 +154,6 @@ export async function addNewStudent({ student_email, course_code }) {
         };
     }
 }
-
 
 export async function addAttendanceLog(course_code) {
     try {
@@ -199,7 +195,6 @@ export async function addAttendanceLog(course_code) {
         };
     }
 }
-
 
 export async function createCode() {
     try {
