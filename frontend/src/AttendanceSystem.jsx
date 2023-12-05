@@ -4,6 +4,7 @@ import NavBar from './components/NavBar'; // Assuming NavBar is a React componen
 import ClassCard from './components/ClassCard'; // Assuming ClassCard is a React component
 import UpcomingClass from './components/UpcomingClass'; // Assuming UpcomingClass is a React component
 import './App.css';
+import SignUpForm from './components/signUpForm';
 
 // Define the component
 const AttendanceSystem = () => {
@@ -24,6 +25,7 @@ const AttendanceSystem = () => {
                 <h3>Upcoming Classes:</h3>
                 <UpcomingClass n_classes={4} />
             </section>
+            <SignUpForm />
 
             <section style={styles.section}>
                 <h2><Link to="/prof">Go to Professor page</Link></h2>
