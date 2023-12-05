@@ -1,1 +1,1 @@
-# Attendance System using Astro and Express
+# Attendance System using Vite and Azure Functions
