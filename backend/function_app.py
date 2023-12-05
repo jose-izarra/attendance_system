@@ -3,13 +3,12 @@ import logging
 import json
 import random
 import os
-# from azure.servicebus import ServiceBusClient
 from datetime import datetime
 import time
 import mysql.connector
+from azure.data.tables import TableServiceClient, TableEntity
+from azure.storage.queue import QueueServiceClient, QueueClient, QueueMessage
 
-# from azure.cosmosdb.table.tableservice import TableService
-# from azure.cosmosdb.table.models import Entity
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
@@ -20,6 +19,10 @@ db_details = {
     "database": os.environ.get('db')
 }
 
+connection_string_storage = os.environ.get('AzureWebJobsStorage')
+dead_letter_queue_name = os.environ.get('dead_letter_queue_name')
+
+
 @app.route(route="signUp")
 def signUp(req: func.HttpRequest) -> func.HttpResponse:
     rows = False  # just in case connection is unsuccessful
@@ -27,7 +30,7 @@ def signUp(req: func.HttpRequest) -> func.HttpResponse:
     # sample call for this function
     # http://localhost:7071/api/singUp?name=Jose%20Izarra&email=jaiza0912@gmail.com&password=mypassword&student=true
     # change to student=false to append to professors table
-    
+    res = False
     try:
         # connection = pymysql.connect(**db_details)
         connection = mysql.connector.connect(**db_details)
@@ -62,7 +65,7 @@ def signUp(req: func.HttpRequest) -> func.HttpResponse:
                 cursor.execute(query, (id_num, name, email, password))
                 connection.commit()
                 logging.info('-------- Query executed correctly')
-            
+            res = True
             sel = "SELECT * from students"
             cursor.execute(sel)
             rows = cursor.fetchall()
@@ -79,11 +82,10 @@ def signUp(req: func.HttpRequest) -> func.HttpResponse:
             connection.close()
             logging.info("MySQL connection closed")
     
-    if rows:
-        return func.HttpResponse(f'Sign up successfull for credentials\n{rows}')
+    if res:
+        return func.HttpResponse(f'Succesfully added', status_code=200)
     else:
-        # happens sometimes when data entered is repeated
-        return func.HttpResponse(f'Something didnt\' go well')  
+        return func.HttpResponse(f'Something didn\'t go well', status_code=204)
 
 
 @app.route(route="login")
@@ -91,6 +93,8 @@ def login(req: func.HttpRequest) -> func.HttpResponse:
     rows = False
     # Example of trigger call:
     # http://localhost:7071/api/login?email=jaiza0912@gmail.com&password=mypassword&student=true
+    res = False
+    
     try: 
         connection = mysql.connector.connect(**db_details)
         
@@ -126,6 +130,8 @@ def login(req: func.HttpRequest) -> func.HttpResponse:
             else:
                 logging.info("------- Login credentials are incorrect")
                 
+            res = True
+                
     except mysql.connector.Error as e:
         logging.info(f'------- Error: {e}')
     
@@ -134,10 +140,11 @@ def login(req: func.HttpRequest) -> func.HttpResponse:
             cursor.close()
             connection.close()
             logging.info("MySQL connection closed")
-    if rows:
-        return func.HttpResponse(f'{rows}')
+            
+    if res:
+        return func.HttpResponse(f'Succesfully added', status_code=200)
     else:
-        return func.HttpResponse(f'Something didn\'t go well')
+        return func.HttpResponse(f'Something didn\'t go well', status_code=204)
             
             
      
@@ -145,7 +152,7 @@ def login(req: func.HttpRequest) -> func.HttpResponse:
 def addNewCourse(req: func.HttpRequest) -> func.HttpResponse:   
     rows = False
     # This function will be called by the teachers
-    
+    res = False
     # Example call
     #http://localhost:7071/api/addNewCourse?course_code=12345&course_name=Designing%20and%20Using%20Databases&prof_email=eduardo@gmail.com
     try: 
@@ -187,6 +194,7 @@ def addNewCourse(req: func.HttpRequest) -> func.HttpResponse:
                 cursor.execute(query, (course_id, course_code, course_name, prof_id))
                 connection.commit()
                 logging.info('-------- Query executed correctly')
+                res = True
             else: 
                 logging.info('-------- Error entering inputs')
             
@@ -206,10 +214,10 @@ def addNewCourse(req: func.HttpRequest) -> func.HttpResponse:
             connection.close()
             logging.info("MySQL connection closed")
             
-    if rows:
-        return func.HttpResponse(f'Successfully added to courses\n{rows}')
+    if res:
+        return func.HttpResponse(f'Succesfully added', status_code=200)
     else:
-        return func.HttpResponse(f'Something didn\'t go well')
+        return func.HttpResponse(f'Something didn\'t go well', status_code=204)
     
     
     
@@ -230,7 +238,7 @@ def get_course_id(cursor, code):
 @app.route(route="addStudentToCourse")
 def addStudentToCourse(req: func.HttpRequest) -> func.HttpResponse:
     rows = False
-    
+    res = False
     # Example call
     # http://localhost:7071/api/addStudentToCourse?student_email=jaiza0912@gmail.com&course_code=12345
     try:
@@ -255,7 +263,7 @@ def addStudentToCourse(req: func.HttpRequest) -> func.HttpResponse:
                 cursor.execute(query, (enrollment_id, student_id, course_id))
                 logging.info('-------- Query executed correctly')
                 connection.commit()
-                
+                res = True
                 query = "SELECT * FROM student_courses;"
                 cursor.execute(query)
                 
@@ -274,11 +282,12 @@ def addStudentToCourse(req: func.HttpRequest) -> func.HttpResponse:
             cursor.close()
             connection.close()
             logging.info("MySQL connection closed")
-            
-    if rows:
-        return func.HttpResponse(f'Successfully enrolled student to course\n{rows}')
+           
+           
+    if res:
+        return func.HttpResponse(f'Succesfully added', status_code=200)
     else:
-        return func.HttpResponse(f'Something didn\'t go well')
+        return func.HttpResponse(f'Something didn\'t go well', status_code=204)
     
 
 def get_students_enrolled(cursor, course_id):
@@ -309,7 +318,7 @@ def addAttendanceLog(req: func.HttpRequest) -> func.HttpResponse:
     rows = False
     # Example call
     # http://localhost:7071/api/addAttendanceLog?course_code=12345
-    
+    res = False
     try:
         connection = mysql.connector.connect(**db_details)
         course_code = req.params.get('course_code')
@@ -336,7 +345,9 @@ def addAttendanceLog(req: func.HttpRequest) -> func.HttpResponse:
             # call populate function
             populate_attendance_log(cursor, class_date, course_id, enrolled_students, random.randint(100000, 999999))
             connection.commit()
-
+            
+            res = True
+            
             sel = "SELECT * FROM attendance_log;"
             cursor.execute(sel)
             rows = cursor.fetchall()
@@ -355,11 +366,10 @@ def addAttendanceLog(req: func.HttpRequest) -> func.HttpResponse:
             logging.info("MySQL connection closed")
     
     
-    
-    if rows:
-        return func.HttpResponse(f'Successfully enrolled student to course\n{rows}')
+    if res:
+        return func.HttpResponse(f'{rows}', status_code=200)
     else:
-        return func.HttpResponse(f'Something didn\'t go well')
+        return func.HttpResponse(f'Something didn\'t go well', status_code=204)
     
 """
 name = req.params.get('name')
@@ -451,7 +461,7 @@ def get_code_from_db(cursor, class_date, course_id):
 def verifyCode(req: func.HttpRequest) -> func.HttpResponse:
     
     # takes inputs from front end and verifies if code is correct
-    # inputs: student_input, email, course_id, class_date
+    # inputs: student_input, email, course_code, class_date
     
     rows = False      
     
@@ -479,9 +489,34 @@ def verifyCode(req: func.HttpRequest) -> func.HttpResponse:
             current_code = get_code_from_db(cursor, class_date, course_id)
             student_id = get_student_id(cursor, student_email)
             
-            markPresent(cursor, attendance_val, student_id, class_date)
-            connection.commit()
-            
+            if student_input == current_code:
+                logging.info('-------- Code is correct')
+                message = func.HttpResponse(f'-------- Code is incorrect')
+                markPresent(cursor, attendance_val, student_id, class_date)
+                connection.commit()
+                
+                table_service_client = TableServiceClient.from_connection_string(connection_string_storage)
+                table_client = table_service_client.get_table_client(table_name="successfulLogIn")
+                table_client.create_table_if_not_exists()
+                
+                task = TableEntity()
+                task["PartitionKey"] = "LogData"
+                task["RowKey"] = 'StudentData'
+                task["StudentID"] = student_id
+                task["CourseID"] = course_id
+                task["Email"] = student_email
+                task["Date"] = class_date
+                task["CurrentCode"] = current_code
+                
+                table_client.upsert_entity(entity=task)
+                loggign.info('-------- Data sent to storage')
+                
+            else:
+                message = func.HttpResponse(f'-------- Code is incorrect')
+                '-------- Code is incorrect'
+                #! send to dead letter queue
+                dead_letter_queue(req)
+                
             sel = "SELECT * FROM attendance_log;"
             cursor.execute(sel)
             rows = cursor.fetchall()
@@ -499,6 +534,29 @@ def verifyCode(req: func.HttpRequest) -> func.HttpResponse:
             logging.info("MySQL connection closed")
             
     if rows:
-        return func.HttpResponse(f'Marked student present\n{rows}', status_code=200)
+        return func.HttpResponse(f'{message}', status_code=200)
     else:
-        return func.HttpResponse(f'Something didn\'t go well')
+        return func.HttpResponse(f'{message}', status_code=204)
+    
+    
+    
+    
+def dead_letter_queue(req: func.HttpRequest):
+    logging.info('Message being sent to Dead-Letter-Queue.')
+
+    try:
+        # Create a QueueServiceClient instance using the connection string
+        queue_service_client = QueueServiceClient.from_connection_string(connection_string_storage)
+
+
+        # Get a reference to the queue
+        queue_client = queue_service_client.get_queue_client(dead_letter_queue_name)
+
+        # Add the request to the queue
+        queue_client.send_message(req.get_body().decode('utf-8'))
+
+
+    except Exception as e:
+        logging.error(f"Error sending message to DLQ: {e}")
+
+    return True
