@@ -1,12 +1,10 @@
 import azure.functions as func
 import logging
-import datetime
 import json
 import random
 import os
-import requests
 # from azure.servicebus import ServiceBusClient
-from time import sleep
+from datetime import datetime
 import mysql.connector
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
@@ -209,6 +207,147 @@ def addNewCourse(req: func.HttpRequest) -> func.HttpResponse:
     else:
         return func.HttpResponse(f'Something didn\'t go well')
     
+    
+    
+def get_student_id(cursor, email):
+    query = "SELECT student_id FROM students WHERE student_email = %s;"
+    cursor.execute(query, (email,))
+    result = cursor.fetchone()
+    logging.info(f"\n------ student_id fetched: {result[0]}")
+    return result[0] if result else None
+
+def get_course_id(cursor, code):
+    query = "SELECT course_id FROM courses WHERE course_code = %s;"
+    cursor.execute(query, (code,))
+    result = cursor.fetchone()
+    logging.info(f"------ course_id fetched: {result[0]}\n")
+    return result[0] if result else None
+    
+@app.route(route="addStudentToCourse")
+def addStudentToCourse(req: func.HttpRequest) -> func.HttpResponse:
+    rows = False
+    
+    # Example call
+    # http://localhost:7071/api/addStudentToCourse?student_email=jaiza0912@gmail.com&course_code=12345
+    try:
+        connection = mysql.connector.connect(**db_details)
+        email = req.params.get("student_email")
+        course_code = req.params.get("course_code")
+        
+        if connection.is_connected:
+            logging.info("------- Connected to database")
+            
+            cursor = connection.cursor()
+            
+            student_id = get_student_id(cursor, email)
+            course_id = get_course_id(cursor, course_code)
+
+            if student_id and course_id:
+                enrollment_id = random.randint(0, 1000000000)
+                query = """
+                            INSERT INTO student_courses (enrollment_id, student_id, course_id)
+                            VALUES (%s, %s, %s);
+                        """
+                cursor.execute(query, (enrollment_id, student_id, course_id))
+                logging.info('-------- Query executed correctly')
+                connection.commit()
+                
+                query = "SELECT * FROM student_courses;"
+                cursor.execute(query)
+                
+                rows = cursor.fetchall()
+                logging.info(f'------- ROWS: {rows}')
+                
+            else:
+                logging.warning(f'Student with email {req.params.get("student_email")} or course with code {req.params.get("course_code")} not found.')
+            
+    
+    except mysql.connector.Error as e:
+        logging.info(f'------- Error: {e}')
+    
+    finally:
+        if 'connection' in locals() and connection.is_connected:
+            cursor.close()
+            connection.close()
+            logging.info("MySQL connection closed")
+            
+    if rows:
+        return func.HttpResponse(f'Successfully enrolled student to course\n{rows}')
+    else:
+        return func.HttpResponse(f'Something didn\'t go well')
+    
+
+def get_students_enrolled(cursor, course_id):
+    query = "SELECT student_id FROM student_courses WHERE course_id = %s;"
+    cursor.execute(query, (course_id,))
+    return cursor.fetchall()
+
+
+
+def populate_attendance_log(cursor, class_date, course_id, enrolled_students):
+    attendance = False  # default is set to absent
+    logging.info('----- Iterating through enrolled students')
+    for student_id in enrolled_students:
+        # logging.info(class_date, type(student_id[0]), course_id, attendance)
+        query = """
+                    INSERT INTO attendance_log (class_date, student_id, course_id, attendance)
+                    VALUES (%s, %s, %s, %s);
+                """
+        cursor.execute(query, (class_date, student_id[0], course_id, attendance))
+
+    logging.info('-------- Attendance logs initialized successfully')
+
+
+@app.route(route="addAttendanceLog")
+def addAttendanceLog(req: func.HttpRequest) -> func.HttpResponse:
+    rows = False
+    # Example call
+    # http://localhost:7071/api/addAttendanceLog?course_code=12345
+    try:
+        connection = mysql.connector.connect(**db_details)
+        course_code = req.params.get('course_code')
+        logging.info(f'------ course_code {course_code}')
+        
+        if connection.is_connected:
+            logging.info("------- Connected to database")
+            
+            cursor = connection.cursor()
+            
+            # Same time for everyone, as teacher will be initializing
+            course_id = get_course_id(cursor, course_code)
+            logging.info(f'------ course_id {course_id}')
+            
+            class_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            logging.info(f'------ class_date {class_date}')
+            
+            enrolled_students = get_students_enrolled(cursor, course_id)         
+            logging.info(f'------ enrolled {enrolled_students}')
+            
+            # call populate function
+            populate_attendance_log(cursor, class_date, course_id, enrolled_students)
+            connection.commit()
+
+            sel = "SELECT * FROM attendance_log;"
+            cursor.execute(sel)
+            rows = cursor.fetchall()
+
+            for row in rows:
+                print(f'ATTENDANCE_LOG TABLE: {row}')
+            
+    
+    except mysql.connector.Error as e:
+        logging.info(f'------- Error: {e}')
+    
+    finally:
+        if 'connection' in locals() and connection.is_connected:
+            cursor.close()
+            connection.close()
+            logging.info("MySQL connection closed")
+            
+    if rows:
+        return func.HttpResponse(f'Successfully enrolled student to course\n{rows}')
+    else:
+        return func.HttpResponse(f'Something didn\'t go well')
 """
 name = req.params.get('name')
 if not name:
