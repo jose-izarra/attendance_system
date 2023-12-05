@@ -439,3 +439,26 @@ def main():
     
 
 """
+
+@app.route(route='dead_letter_queue'):
+def dead_letter_queue(req: func.HttpRequest) -> func.HttpResponse:
+    logging.info('Message being sent to Dead-Letter-Queue.')
+
+    connection_string = os.environ["connection_string"]
+    queue_name = os.environ["queue_name"]
+
+    try:
+        # Create a QueueServiceClient instance using the connection string
+        queue_service_client = QueueServiceClient.from_connection_string(connection_string)
+
+        # Get a reference to the queue
+        queue_client = queue_service_client.get_queue_client(queue_name)
+
+        # Add the request to the queue
+        queue_client.send_message(req.get_body().decode('utf-8'))
+
+    except Exception as ex:
+        logging.error(f"Error sending message to DLQ: {ex}")
+
+    return True
+
