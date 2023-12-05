@@ -6,6 +6,8 @@ import os
 # from azure.servicebus import ServiceBusClient
 from datetime import datetime
 import mysql.connector
+from azure.cosmosdb.table.tableservice import TableService
+from azure.cosmosdb.table.models import Entity
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
@@ -389,7 +391,22 @@ def createCode(req: func.HttpRequest) -> func.HttpResponse:
 def verifyCode(req: func.HttpRequest) -> func.HttpResponse:
     logging.info("VERIFYCODE function")
     
-    studentInput = req.params.get('studentInput')
+    studentInput = req.params.get('code')
+    studentCredentials = req.params.get('credentials')
+ 
+    # add the data to the Azure table if the code is correct.
+    if studentInput == CURRENT_CODE:
+        
+        connection_string = os.environ.get('AzureWebJobsStorage')
+
+        table = TableService(connection_string)
+        table.create_table('successfulLogIn') # The parameters to be passed are the email of the student
+
+        task = Entity()
+        task.PartitionKey = 'LogData'
+        task.RowKey = 'studentData'
+        task.email = studentCredentials
+        task.code = studentInput
 
     # Service bus to get the current output code of the 
         

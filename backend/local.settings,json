@@ -1,0 +1,13 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=cc197ed;AccountKey=84lZPw4XgJb+1/DSqZZR1ur1bRn21ujJL1MJKtgIq2FQ+IbJdQVzgInjNzJghMk8zCoO+gDRiRlK+ASt52loWw==;EndpointSuffix=core.windows.net",
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "AzureWebJobsFeatureFlags": "EnableWorkerIndexing",
+    "host": "dockerlab.westeurope.cloudapp.azure.com",
+    "port": 3306,
+    "user" : "CC_5",
+    "password": "pBH0Cj9_dh58bpB55TmUL7b1yyDbOwzmvql3sE9-f_Y",
+    "db": "CC_5"
+  }
+}
