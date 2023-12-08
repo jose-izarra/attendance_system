@@ -1,4 +1,4 @@
-import React from 'react';
+// import React from 'react';
 import { Link } from 'react-router-dom';
 import NavBar from './components/NavBar'; // Assuming NavBar is a React component
 import ClassCard from './components/ClassCard'; // Assuming ClassCard is a React component
@@ -15,7 +15,7 @@ const AttendanceSystem = () => {
             <NavBar />
 
             {/* Active Classes Section */}
-            <section style={styles.section}>
+            <section className={"bg-blue-100 p-4"}>
                 <h1 style={styles.h1}>Hello Student</h1>
                 <p>Check your attendance below</p>
                 <h3>Active Class:</h3>
