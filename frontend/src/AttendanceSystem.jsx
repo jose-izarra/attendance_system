@@ -15,7 +15,7 @@ const AttendanceSystem = () => {
             <NavBar />
 
             {/* Active Classes Section */}
-            <section style={styles.section}>
+            <section className={"bg-blue-100 p-4"}>
                 <h1 style={styles.h1}>Hello Student</h1>
                 <p>Check your attendance below</p>
                 <h3>Active Class:</h3>
