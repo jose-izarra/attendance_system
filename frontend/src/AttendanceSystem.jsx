@@ -1,4 +1,4 @@
-import React from 'react';
+// import React from 'react';
 import { Link } from 'react-router-dom';
 import NavBar from './components/NavBar'; // Assuming NavBar is a React component
 import ClassCard from './components/ClassCard'; // Assuming ClassCard is a React component
