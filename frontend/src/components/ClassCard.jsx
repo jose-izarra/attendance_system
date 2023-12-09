@@ -7,9 +7,9 @@ const ClassCard = ({ name, active }) => {
     return (
         active ?
             <a href="#" className="w-[80%] my-2">
-                <div className="h-fit w-[100%] bg-slate-100 shadow-xl rounded-xl p-7">
-                    <h2 className="text-center" style={styles.h2}>{name}</h2>
-                    <p className="text-center">Click to scan or input code</p>
+                <div className="h-fit w-[70%] bg-slate-100 shadow-xl rounded-xl p-7">
+                    <h2 className="text-center py-5" style={styles.h2}>{name}</h2>
+                    <p className="text-center text-lg">Click to scan or input code</p>
                 </div>
             </a>
             :

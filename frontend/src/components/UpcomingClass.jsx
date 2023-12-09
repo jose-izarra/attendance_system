@@ -29,7 +29,7 @@ const styles = {
     li: {
         display: 'flex',
         alignItems: 'auto',
-        width: '80%',
+        width: '70%',
         height: '2.5rem',
         borderRadius: '0.75rem',
         borderWidth: '1px',

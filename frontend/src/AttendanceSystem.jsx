@@ -11,14 +11,15 @@ import VerifyCodeForm from "./components/verifycode";
 // Define the component
 const AttendanceSystem = () => {
     return (
-        <main style={styles.main}>
+        <main className='text-white text-sm'>
             <NavBar />
 
             {/* Active Classes Section */}
-            <section className={"bg-blue-100 p-4"}>
-                <h1 style={styles.h1}>Hello Student</h1>
-                <p>Check your attendance below</p>
-                <h3>Active Class:</h3>
+            <section style={styles.section}>
+                <h1 style={styles.h1} className='py-5'>Hello Student</h1>
+                <p className='text-black text-lg'>Check your attendance below</p>
+                <h3 className='text-black text-lg'>Active Class:</h3>
+
                 <ClassCard active={true} name="<<Class Name>>" body="Hello world" />
             </section>
 
@@ -27,9 +28,12 @@ const AttendanceSystem = () => {
                 <h3>Upcoming Classes:</h3>
                 <UpcomingClass n_classes={4} />
             </section>
-            <SignUpForm />
-            <LoginForm />
-            <VerifyCodeForm />
+
+            <section style={styles.section}>
+                <SignUpForm />
+                <LoginForm />
+                <VerifyCodeForm />
+            </section>
 
             <section style={styles.section}>
                 <h2><Link to="/prof">Go to Professor page</Link></h2>
@@ -38,6 +42,8 @@ const AttendanceSystem = () => {
     );
 };
 
+
+// ml-[10rem] pl-[5rem] pb-[2rem] w-[70%]
 // Define inline styles
 const styles = {
     main: {
@@ -46,10 +52,10 @@ const styles = {
         lineHeight: 1.6,
     },
     section: {
-        margin: 'auto',
-        paddingLeft: '2rem',
+        marginLeft: '10rem',
+        paddingLeft: '5rem',
         paddingBottom: '2rem',
-        blockSize: 'fit-content',
+        width: '100%',
     },
     h1: {
         color: 'rgb(0,0,0)',
