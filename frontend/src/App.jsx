@@ -9,7 +9,6 @@ function App() {
             <Routes>
                 <Route path="/" element={<AttendanceSystem />} />
                 <Route path="/prof" element={<ProfPage />} />
-
             </Routes>
         </Router>
     );

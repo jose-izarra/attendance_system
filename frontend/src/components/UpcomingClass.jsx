@@ -32,6 +32,7 @@ const UpcomingClasses = ({ n_classes }) => {
 const styles = {
     li: {
         display: 'flex',
+
         alignItems: 'center',
         width: '80%',
         height: '2.5rem',
