@@ -1,4 +1,4 @@
-import React from 'react';
+// import React from 'react';
 import { Link } from 'react-router-dom';
 import NavBar from './components/NavBar'; // Assuming NavBar is a React component
 import ClassCard from './components/ClassCard'; // Assuming ClassCard is a React component
@@ -19,6 +19,7 @@ const AttendanceSystem = () => {
                 <h1 style={styles.h1} className='py-5'>Hello Student</h1>
                 <p className='text-black text-lg'>Check your attendance below</p>
                 <h3 className='text-black text-lg'>Active Class:</h3>
+
                 <ClassCard active={true} name="<<Class Name>>" body="Hello world" />
             </section>
 
