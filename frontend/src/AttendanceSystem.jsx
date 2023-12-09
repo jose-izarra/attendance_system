@@ -15,23 +15,30 @@ const AttendanceSystem = () => {
             <NavBar />
 
             {/* Active Classes Section */}
-            <section className={"bg-blue-100 p-4"}>
-                <h1 style={styles.h1}>Hello Student</h1>
-                <p>Check your attendance below</p>
-                <h3>Active Class:</h3>
+            <section className={"bg-blue-200 p-4"}>
+            <h1 style={styles.h1} className="mb-4">Hello Student</h1>
+                <p className="mb-4">Check your attendance below</p>
                 <ClassCard active={true} name="<<Class Name>>" body="Hello world" />
             </section>
 
             {/* Upcoming Classes Section */}
-            <section style={styles.section}>
-                <h3>Upcoming Classes:</h3>
+            <section style={styles.section} >
+                <h3 className="text-white">Upcoming Classes:</h3>
                 <UpcomingClass n_classes={4} />
-            </section>
-            <SignUpForm />
-            <LoginForm />
-            <VerifyCodeForm />
+            </section >
+                <div className="flex mb-4 p-4">
+                    {/* SignUpForm Component */}
+                    
+                    <SignUpForm className="mr-4 p-4 rounded-lg" />
 
-            <section style={styles.section}>
+                    {/* LoginForm Component */}
+                    <LoginForm className="mr-4 p-4 rounded-lg" />
+
+                    {/* VerifyCodeForm Component */}
+                    <VerifyCodeForm className="p-4 rounded-lg" />
+                </div>
+
+            <section style={styles.section} >
                 <h2><Link to="/prof">Go to Professor page</Link></h2>
             </section>
         </main>

@@ -13,12 +13,16 @@ const UpcomingClasses = ({ n_classes }) => {
     ];
 
     return (
-        <ul style={{ listStyleType: 'none', padding: 0 }}>
+        <ul className="flex flex-col items-center" style={{ listStyleType: 'none'}}>
             {dummyClasses.map((classItem, index) => (
-                <li key={index} style={styles.li}>
+                <li key={index} className="flex items-center justify-between mb-0.75" style={styles.li}>
                     <span style={{ paddingRight: '0.75rem' }}>{classItem.time} -</span>
-                    {classItem.name} &nbsp; Absences: {classItem.absences}
+                    {classItem.name}
+                    <span className='ml-auto' style={{paddingRight: '0.75rem' }}>
+                        Absences : {classItem.absences}
+                    </span>
                 </li>
+                
             ))}
         </ul>
     );
@@ -28,17 +32,17 @@ const UpcomingClasses = ({ n_classes }) => {
 const styles = {
     li: {
         display: 'flex',
-        alignItems: 'auto',
+        alignItems: 'center',
         width: '80%',
         height: '2.5rem',
         borderRadius: '0.75rem',
         borderWidth: '1px',
         padding: '2rem 0 2rem 0.75rem',
-        margin: '1rem',
+        margin: '0.75rem',
         background: '#f8fafc', // bg-slate-100
         boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.05)', // shadow-md
     },
-};
 
+};
 
 export default UpcomingClasses;
