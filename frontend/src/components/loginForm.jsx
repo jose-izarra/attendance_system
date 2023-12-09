@@ -33,13 +33,15 @@ const LoginForm = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="flex flex-col items-start mx-auto max-w-xs">
+            <h2 className="text-black mb-4">Log In</h2>
             <input
                 type="email"
                 name="email"
                 placeholder="Email"
                 value={formData.email}
                 onChange={handleChange}
+                className="mb-2 p-2 border border-gray-300 rounded text-white"
             />
             <input
                 type="password"
@@ -47,18 +49,24 @@ const LoginForm = () => {
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
+                className="mb-2 p-2 border border-gray-300 rounded text-white"
             />
-            <label>
-                Student:
-                <input
-                    type="checkbox"
-                    name="student"
-                    checked={formData.student}
-                    onChange={handleChange}
-                />
-            </label>
-            <button type="submit">Log In</button>
-            {submitStatus && <p>{submitStatus}</p>}
+            <div className="flex justify-between items-center mb-2 w-full">
+                <div className="bg-white text-black p-2 rounded-md">
+                    Student:
+                    <input
+                        type="checkbox"
+                        name="student"
+                        checked={formData.student}
+                        onChange={handleChange}
+                        className='ml-2'
+                    />  
+                </div>
+                
+                <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded">
+                    Log In
+                </button>
+            </div>
         </form>
     );
 };

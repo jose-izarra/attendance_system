@@ -31,15 +31,17 @@ const VerifyCodeForm = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="flex flex-col items-start mx-auto max-w-xs">
+            <h2 className="text-black mb-4">Verify Code</h2>
             <input
                 type="text"
                 name="studentInput"
                 placeholder="Enter Code"
                 value={formData.studentInput}
                 onChange={handleChange}
+                className="mb-2 p-2 border border-gray-300 rounded text-white"
             />
-            <button type="submit">Verify Code</button>
+            <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded ml-auto">Verify Code</button>
             {submitStatus && <p>{submitStatus}</p>}
         </form>
     );

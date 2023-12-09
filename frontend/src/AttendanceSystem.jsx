@@ -24,19 +24,27 @@ const AttendanceSystem = () => {
             </section>
 
             {/* Upcoming Classes Section */}
-            <section style={styles.section}>
+            <section>
                 <h3>Upcoming Classes:</h3>
                 <UpcomingClass n_classes={4} />
             </section>
+            <section style={styles.main}>
+                <div className="flex mb-8 p-4 ml-auto">
+                    {/* SignUpForm Component */}
+                        
+                    <SignUpForm className="mr-2 p-2 rounded-lg" />
 
-            <section style={styles.section}>
-                <SignUpForm />
-                <LoginForm />
-                <VerifyCodeForm />
+                    {/* LoginForm Component */}
+                    <LoginForm className="mr-2 p-2 rounded-lg" />
+
+                    {/* VerifyCodeForm Component */}
+                    <VerifyCodeForm className="p-2 rounded-lg" />
+                </div>
             </section>
-
-            <section style={styles.section}>
-                <h2><Link to="/prof">Go to Professor page</Link></h2>
+            <section>
+                <div className="flex justify-center items-center">
+                    <h2><Link to="/prof">Go to Professor page</Link></h2>
+                </div>
             </section>
         </main>
     );
@@ -50,12 +58,14 @@ const styles = {
         color: 'rgb(0, 0, 0)',
         fontSize: '20px',
         lineHeight: 1.6,
+        paddingright: '4rem',
     },
     section: {
         marginLeft: '10rem',
         paddingLeft: '5rem',
         paddingBottom: '2rem',
         width: '100%',
+
     },
     h1: {
         color: 'rgb(0,0,0)',
