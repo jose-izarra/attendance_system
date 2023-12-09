@@ -15,7 +15,6 @@ const AttendanceSystem = () => {
             <NavBar />
 
             {/* Active Classes Section */}
-
             <section style={styles.section}>
                 <h1 style={styles.h1} className='py-5'>Hello Student</h1>
                 <p className='text-black text-lg'>Check your attendance below</p>
@@ -25,26 +24,27 @@ const AttendanceSystem = () => {
             </section>
 
             {/* Upcoming Classes Section */}
-            <section style={styles.section} >
-                <h3 className="text-white">Upcoming Classes:</h3>
+            <section>
+                <h3>Upcoming Classes:</h3>
                 <UpcomingClass n_classes={4} />
-
-            </section >
-                <div className="flex mb-4 p-4">
+            </section>
+            <section style={styles.main}>
+                <div className="flex mb-8 p-4 ml-auto">
                     {/* SignUpForm Component */}
-                    
-                    <SignUpForm className="mr-4 p-4 rounded-lg" />
+                        
+                    <SignUpForm className="mr-2 p-2 rounded-lg" />
 
                     {/* LoginForm Component */}
-                    <LoginForm className="mr-4 p-4 rounded-lg" />
+                    <LoginForm className="mr-2 p-2 rounded-lg" />
 
                     {/* VerifyCodeForm Component */}
-                    <VerifyCodeForm className="p-4 rounded-lg" />
+                    <VerifyCodeForm className="p-2 rounded-lg" />
                 </div>
-
-
-            <section style={styles.section} >
-                <h2><Link to="/prof">Go to Professor page</Link></h2>
+            </section>
+            <section>
+                <div className="flex justify-center items-center">
+                    <h2><Link to="/prof">Go to Professor page</Link></h2>
+                </div>
             </section>
         </main>
     );
@@ -58,12 +58,14 @@ const styles = {
         color: 'rgb(0, 0, 0)',
         fontSize: '20px',
         lineHeight: 1.6,
+        paddingright: '4rem',
     },
     section: {
         marginLeft: '10rem',
         paddingLeft: '5rem',
         paddingBottom: '2rem',
         width: '100%',
+
     },
     h1: {
         color: 'rgb(0,0,0)',
