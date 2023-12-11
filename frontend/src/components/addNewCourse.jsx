@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { addNewCourse } from '../api'; // Import the addNewCourse function
+import { addNewCourse } from '../api';
 
 const AddCourseForm = () => {
     const [formData, setFormData] = useState({
@@ -24,22 +24,22 @@ const AddCourseForm = () => {
             const response = await addNewCourse(formData);
             console.log('Course Added Successfully:', response);
             setSubmitStatus('Course Added Successfully!');
-            // Additional handling like clearing the form or redirecting the user
         } catch (error) {
             console.error('Adding Course Failed:', error);
             setSubmitStatus(`Adding Course Failed: ${error.message}`);
-            // Additional error handling
         }
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="flex flex-col items-start mr-10 max-w-xl w-full bg-gray-800 border border-gray-300 p-8 rounded-2xl mt-10 shadow-2xl">
+            <h2 className='text-white mb-6 text-3xl'> Add New Course</h2>
             <input
                 type="text"
                 name="course_code"
                 placeholder="Course Code"
                 value={formData.course_code}
                 onChange={handleChange}
+                className="mb-6 p-4 border border-gray-300 rounded w-full text-black text-2xl"
             />
             <input
                 type="text"
@@ -47,16 +47,20 @@ const AddCourseForm = () => {
                 placeholder="Course Name"
                 value={formData.course_name}
                 onChange={handleChange}
+                className="mb-6 p-4 border border-gray-300 rounded w-full text-black text-2xl"
             />
             <input
                 type="email"
                 name="prof_email"
-                placeholder="Professor's Email"
+                placeholder="Professor Email"
                 value={formData.prof_email}
                 onChange={handleChange}
+                className="mb-6 p-4 border border-gray-300 rounded w-full text-black text-2xl"
             />
-            <button type="submit">Add Course</button>
-            {submitStatus && <p>{submitStatus}</p>}
+            <button type="submit" className="bg-blue-500  text-2xl text-white py-3 px-6 rounded w-full mt-6">
+                Add Course
+            </button>
+            {submitStatus && <p className="mt-6">{submitStatus}</p>}
         </form>
     );
 };
