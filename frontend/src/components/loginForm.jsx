@@ -29,7 +29,12 @@ const LoginForm = () => {
             setSubmitStatus('Login Successful!');
 
             // Redirect the user to the attendance system page
-            navigate('/dashboard'); // Replace '/dashboard' with the actual path you want to redirect to
+            if (formData.student) {
+                navigate('/student'); // Replace '/dashboard' with the actual path you want to redirect to
+            } else {
+                navigate('/prof');
+            }
+            
 
         } catch (error) {
             console.error('Login Failed:', error);
@@ -57,6 +62,18 @@ const LoginForm = () => {
                 onChange={handleChange}
                 className="mb-6 p-4 border border-gray-300 rounded text-black w-full text-xl"
             />
+            
+            <div className="bg-white text-black p-4 rounded-md mr-4 text-xl">
+                    Student:
+                    <input
+                        type="checkbox"
+                        name="student"
+                        checked={formData.student}
+                        onChange={handleChange}
+                        className='ml-2'
+                    />
+            </div>
+
             <div className="ml-auto">
                 <br />
                 <button type="submit" className="bg-blue-500 text-white py-4 px-6 rounded text-xl">
