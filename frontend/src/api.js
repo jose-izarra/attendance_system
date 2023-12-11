@@ -192,7 +192,7 @@ export async function verifyCode(studentInput, email, courseCode) {
             throw new Error(`Error: ${response.status}`);
         }
 
-        const data = await response.text();
+        const data = await response.json(); // Parse JSON response
 
         return {
             status: 200,
@@ -207,6 +207,7 @@ export async function verifyCode(studentInput, email, courseCode) {
         };
     }
 }
+
 
 
 export async function sendCode(courseCode) {

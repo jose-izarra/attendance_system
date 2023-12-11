@@ -26,8 +26,13 @@ const VerifyCodeForm = () => {
                 formData.email, // Pass the email value
                 formData.courseCode // Pass the courseCode value
             );
-            console.log('Verification Successful:', response);
-            setSubmitStatus('Verification Successful!');
+            console.log('Verification Response:', response);
+
+            if (response.body && response.body.successful) {
+                setSubmitStatus('Verification Successful!');
+            } else {
+                setSubmitStatus('Verification Failed');
+            }
             // Additional handling if needed
         } catch (error) {
             console.error('Verification Failed:', error);
