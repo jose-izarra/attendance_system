@@ -166,10 +166,14 @@ export async function addAttendanceLog(course_code) {
 }
 
 
-export async function verifyCode(studentInput) {
+export async function verifyCode(studentInput, email, courseCode) {
     try {
         // Construct the URL with query parameters
-        const queryParams = new URLSearchParams({ studentInput }).toString();
+        const queryParams = new URLSearchParams({
+            student_input: studentInput,
+            email: email,
+            course_code: courseCode
+        }).toString();
         const url = `https://attendancesystemcc1.azurewebsites.net/api/verifyCode?${queryParams}`;
 
         // Make the GET request
@@ -196,6 +200,7 @@ export async function verifyCode(studentInput) {
         };
     }
 }
+
 
 export async function sendCode(courseCode) {
     try {

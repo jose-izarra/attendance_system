@@ -3,7 +3,9 @@ import { verifyCode } from '../api'; // Adjust the import path based on your pro
 
 const VerifyCodeForm = () => {
     const [formData, setFormData] = useState({
-        studentInput: ''
+        studentInput: '',
+        email: '', // Add the email input
+        courseCode: '' // Add the courseCode input
     });
     const [submitStatus, setSubmitStatus] = useState('');
 
@@ -19,7 +21,11 @@ const VerifyCodeForm = () => {
         e.preventDefault();
         setSubmitStatus('Verifying...');
         try {
-            const response = await verifyCode(formData.studentInput);
+            const response = await verifyCode(
+                formData.studentInput,
+                formData.email, // Pass the email value
+                formData.courseCode // Pass the courseCode value
+            );
             console.log('Verification Successful:', response);
             setSubmitStatus('Verification Successful!');
             // Additional handling if needed
@@ -39,11 +45,25 @@ const VerifyCodeForm = () => {
                 placeholder="Enter Code"
                 value={formData.studentInput}
                 onChange={handleChange}
-
                 className="h-[50px] p-2 pl-4 border-gray-300 rounded-[2rem] text-gray-500 text-2xl"
-
             />
-            <button type="submit" className="bg-blue-500 px-5  mx-5 text-white rounded-[1.5rem]  h-[60px] text-2xl">Check Attendance</button>
+            <input
+                type="text"
+                name="email"
+                placeholder="Enter Email" // Add the email input
+                value={formData.email} // Add the email value
+                onChange={handleChange} // Add the email change handler
+                className="h-[50px] p-2 pl-4 border-gray-300 rounded-[2rem] text-gray-500 text-2xl"
+            />
+            <input
+                type="text"
+                name="courseCode"
+                placeholder="Enter Course Code" // Add the courseCode input
+                value={formData.courseCode} // Add the courseCode value
+                onChange={handleChange} // Add the courseCode change handler
+                className="h-[50px] p-2 pl-4 border-gray-300 rounded-[2rem] text-gray-500 text-2xl"
+            />
+            <button type="submit" className="bg-blue-500 px-5 mx-5 text-white rounded-[1.5rem] h-[60px] text-2xl">Check Attendance</button>
             {submitStatus && <p className='text-white p-5'>{submitStatus}</p>}
         </form>
     );
