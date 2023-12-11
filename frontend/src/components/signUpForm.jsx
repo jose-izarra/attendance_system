@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { signUp } from '../api'; // Import the signUp function
+import { signUp } from '../api';
 
 const SignUpForm = () => {
     const [formData, setFormData] = useState({
@@ -16,7 +16,7 @@ const SignUpForm = () => {
             ...formData,
             [name]: type === 'checkbox' ? checked : value
         });
-    }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -24,25 +24,25 @@ const SignUpForm = () => {
         try {
             const response = await signUp(formData);
             console.log('Sign Up Successful:', response);
-            setSubmitStatus(<span className ='text-white'>Sign Up Sucessful!</span>);
+            setSubmitStatus(<span className='text-black'>Sign Up Successful!</span>);
             // Additional handling (e.g., redirecting the user)
         } catch (error) {
             console.error('Sign Up Failed:', error);
-            setSubmitStatus(<span className ='text-white'>`Sign Up Failed: ${error.message}`</span>);
+            setSubmitStatus(<span className='text-black'>{`Sign Up Failed: ${error.message}`}</span>);
             // Additional error handling
         }
     };
 
     return (
-      <form onSubmit={handleSubmit} className="flex flex-col items-start mx-auto max-w-xs">
-            <h2 className="text-black mb-4">Sign Up</h2>
+        <form onSubmit={handleSubmit} className="flex flex-col items-start mr-10 max-w-xl w-full bg-gray-800 border border-gray-300 p-8 rounded-2xl mt-10 shadow-2xl">
+            <h2 className="text-white mb-6 text-3xl">Sign Up</h2>
             <input
                 type="text"
                 name="name"
                 placeholder="Name"
                 value={formData.name}
                 onChange={handleChange}
-                className="mb-2 p-2 border border-gray-300 rounded text-white"
+                className="mb-4 p-4 border border-gray-300 rounded text-black w-full text-xl"
             />
             <input
                 type="email"
@@ -50,7 +50,7 @@ const SignUpForm = () => {
                 placeholder="Email"
                 value={formData.email}
                 onChange={handleChange}
-                className="mb-2 p-2 border border-gray-300 rounded text-white"
+                className="mb-4 p-4 border border-gray-300 rounded text-black w-full text-xl"
             />
             <input
                 type="password"
@@ -58,10 +58,11 @@ const SignUpForm = () => {
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
-                className="mb-2 p-2 border border-gray-300 rounded text-white"
+                className="mb-4 p-4 border border-gray-300 rounded text-black w-full text-xl"
             />
-            <div className="flex justify-between items-center mb-2 w-full">
-                <div className="bg-white text-black p-2 rounded-md">
+            <br />
+            <div className="flex justify-between items-center mb-4 w-full">
+                <div className="bg-white text-black p-4 rounded-md mr-4 text-xl">
                     Student:
                     <input
                         type="checkbox"
@@ -69,17 +70,18 @@ const SignUpForm = () => {
                         checked={formData.student}
                         onChange={handleChange}
                         className='ml-2'
-                    />  
+                    />
                 </div>
-                
-                <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded">
+
+                <button type="submit" className="bg-blue-500 text-white py-4 px-6 rounded ml-auto text-xl">
                     Sign Up
                 </button>
             </div>
-            
-            {submitStatus && <p>{submitStatus}</p>}
+
+            {submitStatus && <p className='text-white'>{submitStatus}</p>}
         </form>
     );
+
 };
 
 export default SignUpForm;
