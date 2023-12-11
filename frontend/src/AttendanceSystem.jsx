@@ -15,7 +15,7 @@ const AttendanceSystem = () => {
             </section>
             
             <section>
-                <ClassCard active={true} name="<< Class Name >>" />
+                {/*<ClassCard active={true} name="<< Class Name >>" />*/}
                 {/* VerifyCodeForm Component */}
                 {/* className="flex flex-col items-start mx-auto max-w-xs py-4" */}
                 {/* <div className=""> */}
