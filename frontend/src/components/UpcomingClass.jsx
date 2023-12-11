@@ -15,7 +15,8 @@ const UpcomingClasses = ({ n_classes }) => {
     return (
         <ul>
             {dummyClasses.map((classItem, index) => (
-                <li key={index} className="flex flex-col mx-auto items-start p-4 bg-gray-800 border border-gray-300 rounded-md shadow-xl mb-4 w-2/3 rounded-3xl">
+                // className="flex flex-col mx-auto items-start p-4 bg-gray-800 border border-gray-300 shadow-xl mb-4 w-2/3 rounded-3xl"
+                <li key={index} className="flex flex-col mx-auto items-start p-4 bg-gray-800 border border-gray-300 shadow-xl mb-4 w-[75%] rounded-3xl">
                     <span className="mt-4 text-3xl text-white font-mono">{classItem.time} - {classItem.name}</span>
                     <span className='mt-4 ml-auto text-3xl text-white font-mono'> Absences : {classItem.absences}</span>
                 </li>
