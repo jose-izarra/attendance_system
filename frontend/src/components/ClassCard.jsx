@@ -5,7 +5,7 @@ const ClassCard = ({ name, active }) => {
     const randomNum = Math.floor(100000 + Math.random() * 900000).toString();
 
     return (
-        <div className="items-center">
+        <div className="">
             {active ?
                 <a href="#" className="w-[80%] my-2">
                     <div className="h-fit w-[70%] bg-slate-100 shadow-xl rounded-xl p-7">

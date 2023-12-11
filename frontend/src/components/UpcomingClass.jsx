@@ -23,7 +23,6 @@ const UpcomingClasses = ({ n_classes }) => {
                         Absences : {classItem.absences}
                     </span>
                 </li>
-                
             ))}
         </ul>
     );
@@ -36,7 +35,7 @@ const styles = {
         font: 'mono',
         display: 'flex',
         alignItems: 'center',
-        width: '80%',
+        width: '50%',
         height: '2.5rem',
         borderRadius: '0.75rem',
         borderWidth: '1px',
