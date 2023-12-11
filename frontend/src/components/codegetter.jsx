@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { sendCode } from '../api';
+import { sendCode, addAttendanceLog } from '../api';
 
 const CodeGenerator = () => {
     const [courseCode, setCourseCode] = useState('');
@@ -16,7 +16,7 @@ const CodeGenerator = () => {
             console.log('API Response:', response);
 
             if (response.status === 200 && response.body && response.body.current_code) {
-                setGeneratedCode(response.body.current_code.toString()); // Convert to string if needed
+                setGeneratedCode(response.body.current_code.toString());
             } else {
                 console.error('Invalid API Response:', response);
                 setError('Failed to fetch the generated code or invalid response');
@@ -27,7 +27,18 @@ const CodeGenerator = () => {
         }
     };
 
+    const handleStartSession = async () => {
+        try {
+            // Call addAttendanceLog with the courseCode value
+            const response = await addAttendanceLog(courseCode);
+            console.log('Attendance Log Added:', response);
 
+            // You can handle the response or display a success message here
+        } catch (error) {
+            console.error('Error adding attendance log:', error);
+            // Handle the error, display an error message, etc.
+        }
+    };
 
     return (
         <div className="flex flex-col items-start mr-10 max-w-xl w-full bg-gray-800 border border-gray-300 p-8 rounded-2xl mt-10 shadow-2xl">
@@ -46,6 +57,14 @@ const CodeGenerator = () => {
             </form>
             {generatedCode && <p className="mt-6 text-lg">Generated Code: {generatedCode}</p>}
             {error && <p className="mt-6 text-red-500">Error: {error}</p>}
+
+            {/* Start Session Button */}
+            <button
+                onClick={handleStartSession}
+                className="bg-green-500 text-2xl text-white py-4 px-6 rounded mt-4"
+            >
+                Start Session
+            </button>
         </div>
     );
 };
