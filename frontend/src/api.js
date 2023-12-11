@@ -36,13 +36,11 @@ export async function signUp({ name, email, password, student }) {
 
 export async function login({ email, password, student }) {
     try {
-        // Construct the URL with query parameters
         const queryParams = new URLSearchParams({ email, password, student }).toString();
         const url = `https://attendancesystemcc1.azurewebsites.net/api/login?${queryParams}`;
 
         const response = await fetch(url, {
-            method: 'GET', // Change method to 'GET'
-            // Remove the body
+            method: 'GET',
         });
 
         if (!response.ok) {
@@ -51,10 +49,20 @@ export async function login({ email, password, student }) {
 
         const data = await response.json();
 
-        return {
-            status: 200,
-            body: data
-        };
+        if (data.successful === true) {
+            // Only return data if 'successful' is true
+            return {
+                status: 200,
+                body: data
+            };
+        } else {
+            return {
+                status: 200,
+                body: {
+                    error: "Login credentials are incorrect"
+                }
+            };
+        }
     } catch (error) {
         return {
             status: 500,
@@ -64,6 +72,7 @@ export async function login({ email, password, student }) {
         };
     }
 }
+
 
 
 export async function addNewCourse({ course_code, course_name, prof_email }) {
