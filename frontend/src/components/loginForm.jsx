@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-import { login } from '../api'; // Import the login function
+import { login } from '../api';
+import { useNavigate } from 'react-router-dom';
 
 const LoginForm = () => {
+    const navigate = useNavigate();
+
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -15,7 +18,7 @@ const LoginForm = () => {
             ...formData,
             [name]: type === 'checkbox' ? checked : value
         });
-    }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -24,7 +27,10 @@ const LoginForm = () => {
             const response = await login(formData);
             console.log('Login Successful:', response);
             setSubmitStatus('Login Successful!');
-            // Additional handling (e.g., redirecting the user)
+
+            // Redirect the user to the attendance system page
+            navigate('/dashboard'); // Replace '/dashboard' with the actual path you want to redirect to
+
         } catch (error) {
             console.error('Login Failed:', error);
             setSubmitStatus(`Login Failed: ${error.message}`);
@@ -33,13 +39,15 @@ const LoginForm = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="flex flex-col items-start ml-10 max-w-md w-full bg-gray-800 border border-gray-300 p-8 rounded-2xl mt-10  mr-70 shadow-2xl">
+            <h2 className="text-white mb-6 text-3xl">Log In</h2>
             <input
                 type="email"
                 name="email"
                 placeholder="Email"
                 value={formData.email}
                 onChange={handleChange}
+                className="mb-6 p-4 border border-gray-300 rounded text-black w-full text-xl"
             />
             <input
                 type="password"
@@ -47,20 +55,17 @@ const LoginForm = () => {
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
+                className="mb-6 p-4 border border-gray-300 rounded text-black w-full text-xl"
             />
-            <label>
-                Student:
-                <input
-                    type="checkbox"
-                    name="student"
-                    checked={formData.student}
-                    onChange={handleChange}
-                />
-            </label>
-            <button type="submit">Log In</button>
-            {submitStatus && <p>{submitStatus}</p>}
+            <div className="ml-auto">
+                <br />
+                <button type="submit" className="bg-blue-500 text-white py-4 px-6 rounded text-xl">
+                    Log In
+                </button>
+            </div>
         </form>
     );
+
 };
 
 export default LoginForm;

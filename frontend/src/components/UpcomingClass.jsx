@@ -13,32 +13,16 @@ const UpcomingClasses = ({ n_classes }) => {
     ];
 
     return (
-        <ul style={{ listStyleType: 'none', padding: 0 }}>
+        <ul>
             {dummyClasses.map((classItem, index) => (
-                <li key={index} style={styles.li}>
-                    <span style={{ paddingRight: '0.75rem' }}>{classItem.time} -</span>
-                    {classItem.name} &nbsp; Absences: {classItem.absences}
+                <li key={index} className="flex flex-col mx-auto items-start p-4 bg-gray-800 border border-gray-300 rounded-md shadow-xl mb-4 w-2/3 rounded-3xl">
+                    <span className="mt-4 text-3xl text-white font-mono">{classItem.time} - {classItem.name}</span>
+                    <span className='mt-4 ml-auto text-3xl text-white font-mono'> Absences : {classItem.absences}</span>
                 </li>
             ))}
         </ul>
     );
 };
 
-// Define inline styles
-const styles = {
-    li: {
-        display: 'flex',
-        alignItems: 'auto',
-        width: '70%',
-        height: '2.5rem',
-        borderRadius: '0.75rem',
-        borderWidth: '1px',
-        padding: '2rem 0 2rem 0.75rem',
-        margin: '1rem',
-        background: '#f8fafc', // bg-slate-100
-        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.05)', // shadow-md
-    },
-};
-
-
 export default UpcomingClasses;
+
