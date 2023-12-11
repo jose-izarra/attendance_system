@@ -31,25 +31,26 @@ def signUp(req: func.HttpRequest) -> func.HttpResponse:
     # http://localhost:7071/api/singUp?name=Jose%20Izarra&email=jaiza0912@gmail.com&password=mypassword&student=true
     # change to student=false to append to professors table
     res = False
+    
+    id_num = random.randint(0, 1000000000)
+    name = req.params.get('name')
+    email = req.params.get('email')
+    password = req.params.get('password')
+    student = req.params.get('student')
+    logging.info(f"------- name: {name}, email: {email}, password: {password}, student:{student}")
+    
     try:
         # connection = pymysql.connect(**db_details)
         connection = mysql.connector.connect(**db_details)
         
         # load credentials to database if already doesnt exist
-        id_num = random.randint(0, 1000000000)
-        name = req.params.get('name')
-        email = req.params.get('email')
-        password = req.params.get('password')
-        student = req.params.get('student')
-        logging.info(f"------- name: {name}, email: {email}, password: {password}, student:{student}")
-        
         
         if connection.is_connected:
             logging.info("------- Connected to database")
             
             cursor = connection.cursor()
             
-            if student == "true":
+            if student.lower() == "true":
                 query = f"""
                             INSERT INTO students (student_id, student_name, student_email, student_password)
                             VALUES (%s, %s, %s, %s);
@@ -78,6 +79,7 @@ def signUp(req: func.HttpRequest) -> func.HttpResponse:
     
     finally:
         if 'connection' in locals() and connection.is_connected:
+            cursor.fetchall()
             cursor.close()
             connection.close()
             logging.info("MySQL connection closed")
@@ -90,11 +92,10 @@ def signUp(req: func.HttpRequest) -> func.HttpResponse:
 
 @app.route(route="login")
 def login(req: func.HttpRequest) -> func.HttpResponse:
-    rows = False
     # Example of trigger call:
     # http://localhost:7071/api/login?email=jaiza0912@gmail.com&password=mypassword&student=true
-    res = False
     
+    message = None
     try: 
         connection = mysql.connector.connect(**db_details)
         
@@ -108,7 +109,7 @@ def login(req: func.HttpRequest) -> func.HttpResponse:
             
             cursor = connection.cursor()
             
-            if student == 'true':
+            if student.lower() == 'true':
                 query = f"""
                         SELECT student_email, student_password 
                         FROM students WHERE student_email= %s AND student_password= %s;
@@ -122,39 +123,39 @@ def login(req: func.HttpRequest) -> func.HttpResponse:
             if email and password:
                 cursor.execute(query, (email, password))
             
-            rows = cursor.fetchall()
+            credentials = cursor.fetchone()
+            logging.info(f'db_credentials {credentials}')
             
             # if exists, credentials are correct
-            if rows:
-                logging.info("------- Login credentials are correct")
-            else:
-                logging.info("------- Login credentials are incorrect")
+            if credentials == (email, password):
+                message = "Login credentials are correct"
                 
-            res = True
+            else:
+                message = "Login credentials are incorrect"              
                 
     except mysql.connector.Error as e:
         logging.info(f'------- Error: {e}')
     
     finally: 
         if 'connection' in locals() and connection.is_connected:
+            cursor.fetchall()
             cursor.close()
             connection.close()
             logging.info("MySQL connection closed")
-            
-    if res:
-        return func.HttpResponse(f'Succesfully added', status_code=200)
-    else:
-        return func.HttpResponse(f'Something didn\'t go well', status_code=204)
-            
+    
+    return func.HttpResponse(f'{message}', status_code=200)
             
      
 @app.route(route="addNewCourse")
 def addNewCourse(req: func.HttpRequest) -> func.HttpResponse:   
-    rows = False
     # This function will be called by the teachers
+    
+    rows = False
     res = False
+    
     # Example call
     #http://localhost:7071/api/addNewCourse?course_code=12345&course_name=Designing%20and%20Using%20Databases&prof_email=eduardo@gmail.com
+    
     try: 
         connection = mysql.connector.connect(**db_details)
         
@@ -210,6 +211,7 @@ def addNewCourse(req: func.HttpRequest) -> func.HttpResponse:
     
     finally:
         if 'connection' in locals() and connection.is_connected:
+            cursor.fetchall()
             cursor.close()
             connection.close()
             logging.info("MySQL connection closed")
@@ -219,22 +221,7 @@ def addNewCourse(req: func.HttpRequest) -> func.HttpResponse:
     else:
         return func.HttpResponse(f'Something didn\'t go well', status_code=204)
     
-    
-    
-def get_student_id(cursor, email):
-    query = "SELECT student_id FROM students WHERE student_email = %s;"
-    cursor.execute(query, (email,))
-    result = cursor.fetchone()
-    logging.info(f"\n------ student_id fetched: {result[0]}")
-    return result[0] if result else None
-
-def get_course_id(cursor, code):
-    query = "SELECT course_id FROM courses WHERE course_code = %s;"
-    cursor.execute(query, (code,))
-    result = cursor.fetchone()
-    logging.info(f"------ course_id fetched: {result[0]}\n")
-    return result[0] if result else None
-    
+        
 @app.route(route="addStudentToCourse")
 def addStudentToCourse(req: func.HttpRequest) -> func.HttpResponse:
     rows = False
@@ -266,19 +253,19 @@ def addStudentToCourse(req: func.HttpRequest) -> func.HttpResponse:
                 res = True
                 query = "SELECT * FROM student_courses;"
                 cursor.execute(query)
-                
+            
                 rows = cursor.fetchall()
                 logging.info(f'------- ROWS: {rows}')
-                
+
             else:
                 logging.warning(f'Student with email {req.params.get("student_email")} or course with code {req.params.get("course_code")} not found.')
-            
-    
+        
     except mysql.connector.Error as e:
         logging.info(f'------- Error: {e}')
     
     finally:
         if 'connection' in locals() and connection.is_connected:
+            cursor.fetchall()
             cursor.close()
             connection.close()
             logging.info("MySQL connection closed")
@@ -289,19 +276,49 @@ def addStudentToCourse(req: func.HttpRequest) -> func.HttpResponse:
     else:
         return func.HttpResponse(f'Something didn\'t go well', status_code=204)
     
+# helper functions
+
+def get_student_id(cursor, email):
+    logging.info('----- Getting student_id')
+    
+    query = "SELECT student_id FROM students WHERE student_email = %s;"
+    cursor.execute(query, (email,))
+    result = cursor.fetchone()
+    
+    logging.info(f"\n------ student_id fetched: {result[0]}")
+    return result[0] if result else None
+
+def get_course_id(cursor, code):
+    logging.info('----- Getting course_id')
+    query = "SELECT course_id FROM courses WHERE course_code = %s;"
+    cursor.execute(query, (code,))
+    result = cursor.fetchone()
+    
+    logging.info(f"------ course_id fetched: {result[0]}\n")
+    return result[0] if result else None
+
 
 def get_students_enrolled(cursor, course_id):
+    logging.info('----- Getting students enrolled')
     query = "SELECT student_id FROM student_courses WHERE course_id = %s;"
     cursor.execute(query, (course_id,))
+    logging.info('-------- Students enrolled fetched successfully')
     return cursor.fetchall()
 
 
 
-def populate_attendance_log(cursor, class_date, course_id, enrolled_students, current_code):
+def populate_attendance_log(cursor, enrolled_students, class_date, course_id, current_code):
+    logging.info('Populating attendance logs')
+    
     attendance = False  # default is set to absent
+    
     logging.info('----- Iterating through enrolled students')
+    
     for student_id in enrolled_students:
         # logging.info(class_date, type(student_id[0]), course_id, attendance)
+        logging.info(f'student_id: {student_id}')
+        logging.info(f'class_date: {class_date}')
+        # logging.info(f'{type(student_id[0])}, {type(student_id)}')
         query = """
                     INSERT INTO attendance_log (class_date, student_id, course_id, attendance, current_code)
                     VALUES (%s, %s, %s, %s, %s);
@@ -312,6 +329,60 @@ def populate_attendance_log(cursor, class_date, course_id, enrolled_students, cu
 
 def gen_code():
     return random.randint(100000, 999999)
+
+def print_date(cursor, attendance_id):
+    logging.info('----- Printing date')
+    query = "SELECT DATE_FORMAT(class_date, '%y-%m-%d %H') FROM attendance_log WHERE attendance_id = %s;"
+    cursor.execute(query, (attendance_id,))
+    result = cursor.fetchone()
+    logging.info(f"\n------ date fetched: {result[0]}")
+    logging.info(f"type: {type(result[0])})")
+    
+    return result[0] if result else None
+
+def update_code(cursor, class_date, course_id, current_code):
+    logging.info('----- Updating attendance code')
+    logging.info(f'class_date: {class_date}')
+    
+    # db_date = print_date(cursor, 3)
+    
+    # logging.info(f'type: {type(db_date)}, type: {type(class_date)}')
+    query = f"""
+                UPDATE attendance_log SET current_code = %s WHERE course_id = %s 
+                AND DATE_FORMAT(class_date, '%Y-%m-%d %H') = %s;
+            """
+        
+    cursor.execute(query, (current_code, course_id, class_date))
+
+    logging.info('-------- Attendance code updated successfully')
+
+
+def markPresent(cursor, student_id, class_date, course_id):
+    logging.info('----- Marking student as present')
+    
+    query = f"""
+                UPDATE attendance_log SET attendance = 1 
+                WHERE student_id = %s 
+                AND course_id = %s
+                AND DATE_FORMAT(class_date, '%Y-%m-%d %H') = %s;
+            """
+    
+    cursor.execute(query, (student_id, course_id, class_date))
+
+    logging.info('-------- Marked student present successfully')
+   
+
+def get_code_from_db(cursor, class_date, course_id):
+    logging.info("------ Getting code from database")
+    query = f"SELECT current_code FROM attendance_log WHERE course_id = %s AND DATE_FORMAT(class_date, '%Y-%m-%d %H') = %s;"
+    
+    cursor.execute(query, (course_id, class_date))
+    result = cursor.fetchall()[0]
+    
+    logging.info(f"\n------ code fetched: {result[0]}, type: {type(result[0])})")
+    
+    return result[0] if result else None
+
 
 @app.route(route="addAttendanceLog")
 def addAttendanceLog(req: func.HttpRequest) -> func.HttpResponse:
@@ -343,7 +414,7 @@ def addAttendanceLog(req: func.HttpRequest) -> func.HttpResponse:
             logging.info(f'------ enrolled {enrolled_students}')
             
             # call populate function
-            populate_attendance_log(cursor, class_date, course_id, enrolled_students, random.randint(100000, 999999))
+            populate_attendance_log(cursor, enrolled_students, class_date, course_id,  random.randint(100000, 999999))
             connection.commit()
             
             res = True
@@ -361,6 +432,7 @@ def addAttendanceLog(req: func.HttpRequest) -> func.HttpResponse:
     
     finally:
         if 'connection' in locals() and connection.is_connected:
+            
             cursor.close()
             connection.close()
             logging.info("MySQL connection closed")
@@ -371,46 +443,17 @@ def addAttendanceLog(req: func.HttpRequest) -> func.HttpResponse:
     else:
         return func.HttpResponse(f'Something didn\'t go well', status_code=204)
     
-"""
-name = req.params.get('name')
-if not name:
-    try:
-        req_body = req.get_json()
-    except ValueError:
-        pass
-    else:
-        name = req_body.get('name')
-
-if name:
-    return func.HttpResponse(f"Hello, {name}. This HTTP triggered function executed successfully.")
-else:
-    return func.HttpResponse(
-            "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.",
-            status_code=200
-    )
-"""
-
-def update_code(cursor, class_date, course_id, current_code):
-    
-    query = """
-                UPDATE attendance_log SET current_code = %s WHERE course_id = %s AND class_date=  %s;
-            """
-        
-    cursor.execute(query, (current_code, course_id, class_date))
-
-    logging.info('-------- Attendance code updated successfully')
-
 
 @app.route(route="sendCode")
 def sendCode(req: func.HttpRequest) -> func.HttpResponse:
     # get current code
-    CURRENT_CODE = gen_code()
-    logging.info(f'------ CURRENT_CODE: {CURRENT_CODE}')
+    current_code = gen_code()
+    logging.info(f'------ current_code: {current_code}')
     
     # get inputs
     # inputs: course_code
     
-    class_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")[0:10]
+    class_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")[:13]
     course_code = req.params.get('course_code') 
     
     # this function will be called by the professor to initialize the code every 30 seconds
@@ -423,11 +466,8 @@ def sendCode(req: func.HttpRequest) -> func.HttpResponse:
             cursor = connection.cursor()
             
             course_id = get_course_id(cursor, course_code)
-            update_code(cursor, class_date, course_id, CURRENT_CODE)
+            update_code(cursor, class_date, course_id, current_code)
             connection.commit()
-            
-            current_code = get_code_from_db(cursor, class_date, course_id)
-            logging.info(f'------ current_code: {current_code}')
             
             logging.info('-------- Query executed correctly')
             
@@ -441,51 +481,30 @@ def sendCode(req: func.HttpRequest) -> func.HttpResponse:
             connection.close()
             logging.info("MySQL connection closed")
             
-        if CURRENT_CODE:
-            return func.HttpResponse(json.dumps(dict(code=CURRENT_CODE)), mimetype="application/json", status_code=200)
-        else:
-            return func.HttpResponse(f'Something didn\'t go well')
+    logging.info(f"sending code to frontend")
     
-
-
-def markPresent(cursor, attendance_val, student_id, class_date):
-    query = """
-                UPDATE attendance_log SET attendance = %s WHERE student_id = %s AND class_date=  %s;
-            """
-            
-    cursor.execute(query, (attendance_val, student_id, class_date))
-
-    logging.info('-------- Attendance logs updated successfully')
-   
-
-def get_code_from_db(cursor, class_date, course_id):
+    return func.HttpResponse(json.dumps(dict({"current_code":current_code})), mimetype="application/json", status_code=200)
     
-    query = "SELECT current_code FROM attendance_log WHERE course_id = %s AND class_date=  %s;"
     
-    cursor.execute(query, (course_id, class_date))
-    result = cursor.fetchone()
-    logging.info(f"\n------ code fetched: {result}")
-    return result[0] if result else None
 
 @app.route(route="verifyCode")
 def verifyCode(req: func.HttpRequest) -> func.HttpResponse:
-    
+    logging.info("Verifying Code")
     # takes inputs from front end and verifies if code is correct
     # inputs: student_input, email, course_code, class_date
-    
     rows = False      
+    message = None
     
     attendance_val = True
     student_input = req.params.get('student_input')
     student_email = req.params.get('email')
     course_code = req.params.get('course_code')
-    class_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")[0:10]
+    class_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")[:13]
     
-    
-    logging.info(f'------ student_input {student_input}')
-    logging.info(f'------ student_email {student_email}')
-    logging.info(f'------ course_id {course_code}')
-    logging.info(f'------ class_date {class_date}')
+    logging.info(f'student_input: {student_input}')
+    logging.info(f'student_email: {student_email}')
+    logging.info(f'course_code: {course_code}')
+    logging.info(f'class_date: {class_date}')
           
     try:
         connection = mysql.connector.connect(**db_details)
@@ -494,20 +513,31 @@ def verifyCode(req: func.HttpRequest) -> func.HttpResponse:
             logging.info("------- Connected to database")
             
             cursor = connection.cursor()
+            logging.info(f'inside verifyCode')
+            
+            student_id = get_student_id(cursor, student_email)
+            logging.info(f'student_id from vc{student_id}')
             
             course_id = get_course_id(cursor, course_code)
-            current_code = get_code_from_db(cursor, class_date, course_id)
-            student_id = get_student_id(cursor, student_email)
+            logging.info(f'course_id from vc {course_id}')
             
-            if student_input == current_code:
+            db_current_code = get_code_from_db(cursor, class_date, course_id)
+            logging.info(f'current_code from vc{db_current_code}')
+            
+            
+            
+            if int(student_input) == db_current_code:
                 logging.info('-------- Code is correct')
-                message = func.HttpResponse(f'-------- Code is incorrect')
-                markPresent(cursor, attendance_val, student_id, class_date)
+                message = func.HttpResponse(f'-------- Code is correct')
+                
+                markPresent(cursor, student_id, class_date, course_id)
+                
                 connection.commit()
                 
+                """
                 table_service_client = TableServiceClient.from_connection_string(connection_string_storage)
                 table_client = table_service_client.get_table_client(table_name="successfulLogIn")
-                table_client.create_table_if_not_exists()
+                table_client.create_table()
                 
                 task = TableEntity()
                 task["PartitionKey"] = "LogData"
@@ -520,6 +550,7 @@ def verifyCode(req: func.HttpRequest) -> func.HttpResponse:
                 
                 table_client.upsert_entity(entity=task)
                 logging.info('-------- Data sent to storage')
+                """
                 
             else:
                 message = func.HttpResponse(f'-------- Code is incorrect')
@@ -542,11 +573,11 @@ def verifyCode(req: func.HttpRequest) -> func.HttpResponse:
             cursor.close()
             connection.close()
             logging.info("MySQL connection closed")
-            
+        
     if rows:
         return func.HttpResponse(f'{message}', status_code=200)
     else:
-        return func.HttpResponse(f'{message}', status_code=204)
+        return func.HttpResponse(f'{message}', status_code=200)
     
     
     
@@ -555,18 +586,10 @@ def dead_letter_queue(req: func.HttpRequest):
     logging.info('Message being sent to Dead-Letter-Queue.')
 
     try:
-        # Create a QueueServiceClient instance using the connection string
         queue_service_client = QueueServiceClient.from_connection_string(connection_string_storage)
-
-
-        # Get a reference to the queue
         queue_client = queue_service_client.get_queue_client(dead_letter_queue_name)
-
-        # Add the request to the queue
         queue_client.send_message(req.get_body().decode('utf-8'))
-
-
+        logging.info("Message sent to Dead-Letter-Queue.")
+        
     except Exception as e:
         logging.error(f"Error sending message to DLQ: {e}")
-
-    return True
