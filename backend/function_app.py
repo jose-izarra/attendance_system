@@ -94,7 +94,7 @@ def signUp(req: func.HttpRequest) -> func.HttpResponse:
 def login(req: func.HttpRequest) -> func.HttpResponse:
     # Example of trigger call:
     # http://localhost:7071/api/login?email=jaiza0912@gmail.com&password=mypassword&student=true
-    
+    is_in = True
     message = None
     try: 
         connection = mysql.connector.connect(**db_details)
@@ -129,6 +129,7 @@ def login(req: func.HttpRequest) -> func.HttpResponse:
             # if exists, credentials are correct
             if credentials == (email, password):
                 message = "Login credentials are correct"
+                return func.HttpResponse(is_in, status_code=200)
                 
             else:
                 message = "Login credentials are incorrect"              
