@@ -79,7 +79,7 @@ def signUp(req: func.HttpRequest) -> func.HttpResponse:
     
     finally:
         if 'connection' in locals() and connection.is_connected:
-            cursor.fetchall()
+            
             cursor.close()
             connection.close()
             logging.info("MySQL connection closed")
@@ -94,7 +94,7 @@ def signUp(req: func.HttpRequest) -> func.HttpResponse:
 def login(req: func.HttpRequest) -> func.HttpResponse:
     # Example of trigger call:
     # http://localhost:7071/api/login?email=jaiza0912@gmail.com&password=mypassword&student=true
-    is_in = True
+    is_in = False
     message = None
     try: 
         connection = mysql.connector.connect(**db_details)
@@ -129,7 +129,7 @@ def login(req: func.HttpRequest) -> func.HttpResponse:
             # if exists, credentials are correct
             if credentials == (email, password):
                 message = "Login credentials are correct"
-                return func.HttpResponse(is_in, status_code=200)
+                is_in = True
                 
             else:
                 message = "Login credentials are incorrect"              
@@ -139,12 +139,11 @@ def login(req: func.HttpRequest) -> func.HttpResponse:
     
     finally: 
         if 'connection' in locals() and connection.is_connected:
-            cursor.fetchall()
             cursor.close()
             connection.close()
             logging.info("MySQL connection closed")
     
-    return func.HttpResponse(f'{message}', status_code=200)
+    return func.HttpResponse(json.dumps(dict({"successful":is_in})), status_code=200)
             
      
 @app.route(route="addNewCourse")
@@ -212,7 +211,7 @@ def addNewCourse(req: func.HttpRequest) -> func.HttpResponse:
     
     finally:
         if 'connection' in locals() and connection.is_connected:
-            cursor.fetchall()
+            
             cursor.close()
             connection.close()
             logging.info("MySQL connection closed")
@@ -266,7 +265,7 @@ def addStudentToCourse(req: func.HttpRequest) -> func.HttpResponse:
     
     finally:
         if 'connection' in locals() and connection.is_connected:
-            cursor.fetchall()
+            
             cursor.close()
             connection.close()
             logging.info("MySQL connection closed")
