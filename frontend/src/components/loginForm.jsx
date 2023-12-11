@@ -25,17 +25,26 @@ const LoginForm = () => {
         setSubmitStatus('Logging in...');
         try {
             const response = await login(formData);
-            console.log('Login Successful:', response);
-            setSubmitStatus('Login Successful!');
 
-            // Redirect the user to the attendance system page
-            if (formData.student) {
-                navigate('/student'); // Replace '/dashboard' with the actual path you want to redirect to
+            if (response.status === 200) {
+                if (response.body.successful === true) {
+                    console.log('Login Successful:', response);
+                    setSubmitStatus('Login Successful!');
+
+                    // Redirect the user to the attendance system page
+                    if (formData.student) {
+                        navigate('/student'); // Replace '/dashboard' with the actual path you want to redirect to
+                    } else {
+                        navigate('/prof');
+                    }
+                } else {
+                    console.error('Login Failed: Login credentials are incorrect');
+                    setSubmitStatus('Login Failed: Login credentials are incorrect');
+                }
             } else {
-                navigate('/prof');
+                console.error('Login Failed: Error calling the API');
+                setSubmitStatus('Login Failed: Error calling the API');
             }
-            
-
         } catch (error) {
             console.error('Login Failed:', error);
             setSubmitStatus(`Login Failed: ${error.message}`);
@@ -62,16 +71,16 @@ const LoginForm = () => {
                 onChange={handleChange}
                 className="mb-6 p-4 border border-gray-300 rounded text-black w-full text-xl"
             />
-            
+
             <div className="bg-white text-black p-4 rounded-md mr-4 text-xl">
-                    Student:
-                    <input
-                        type="checkbox"
-                        name="student"
-                        checked={formData.student}
-                        onChange={handleChange}
-                        className='ml-2'
-                    />
+                Student:
+                <input
+                    type="checkbox"
+                    name="student"
+                    checked={formData.student}
+                    onChange={handleChange}
+                    className='ml-2'
+                />
             </div>
 
             <div className="ml-auto">
@@ -80,9 +89,10 @@ const LoginForm = () => {
                     Log In
                 </button>
             </div>
+
+            <div className="text-red-500 mt-4">{submitStatus}</div>
         </form>
     );
-
 };
 
 export default LoginForm;
