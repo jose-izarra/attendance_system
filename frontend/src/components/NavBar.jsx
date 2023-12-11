@@ -5,7 +5,7 @@ const NavBar = () => {
     return (
         <nav className="bg-blue-500 w-screen">
             <div className="container flex items-center justify-between py-4 px-6">
-                <div className="text-white font-bold font-mono text-4xl">
+                <div className="text-white font-bold font-mono text-4xl ml-4">
                     BASP
                 </div>
                 <ul className="flex space-x-4 justfy-end">

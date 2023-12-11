@@ -39,7 +39,7 @@ const VerifyCodeForm = () => {
                 placeholder="Enter Code"
                 value={formData.studentInput}
                 onChange={handleChange}
-                className="mb-2 p-2 border border-gray-300 rounded text-white text-2xl"
+                className="mb-2 p-2 border border-gray-300 rounded text-black text-2xl"
             />
             <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded mx-auto text-2xl mb-8">Check Attendance</button>
             {submitStatus && <p>{submitStatus}</p>}
