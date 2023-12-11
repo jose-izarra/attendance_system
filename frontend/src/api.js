@@ -139,17 +139,14 @@ export async function addNewStudent({ student_email, course_code }) {
 
 export async function addAttendanceLog(course_code) {
     try {
-        const url = 'https://attendancesystemcc1.azurewebsites.net/api/addAttendanceLog';
-
-        // Prepare the request body
-        const requestBody = {
-            course_code: course_code
-        };
+        // Construct the URL with query parameters
+        const queryParams = new URLSearchParams({ course_code }).toString();
+        const url = `https://attendancesystemcc1.azurewebsites.net/api/addAttendanceLog?${queryParams}`;
 
         // Make the POST request
         const response = await fetch(url, {
             method: 'POST',
-            body: JSON.stringify(requestBody)
+            body: JSON.stringify({ course_code }) // Send the course_code in the request body
         });
 
         // Check if the response is ok (status in the range 200-299)
@@ -173,6 +170,7 @@ export async function addAttendanceLog(course_code) {
         };
     }
 }
+
 
 
 export async function verifyCode(studentInput, email, courseCode) {
