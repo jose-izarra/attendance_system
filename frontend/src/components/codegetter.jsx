@@ -5,6 +5,7 @@ const CodeGenerator = () => {
     const [courseCode, setCourseCode] = useState('');
     const [generatedCode, setGeneratedCode] = useState('');
     const [error, setError] = useState('');
+    const [sessionStart, setSessionStart] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -32,11 +33,13 @@ const CodeGenerator = () => {
             // Call addAttendanceLog with the courseCode value
             const response = await addAttendanceLog(courseCode);
             console.log('Attendance Log Added:', response);
+            setSessionStart(true);
 
             // You can handle the response or display a success message here
         } catch (error) {
             console.error('Error adding attendance log:', error);
             // Handle the error, display an error message, etc.
+            setSessionStart(false);
         }
     };
 
@@ -65,6 +68,9 @@ const CodeGenerator = () => {
             >
                 Start Session
             </button>
+            {sessionStart && <p className="mt-6 text-lg">Session Started</p>}
+            {!sessionStart && <p className="mt-6 text-lg">Session Not Started</p>}
+            {}
         </div>
     );
 };
