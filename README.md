@@ -89,8 +89,8 @@ We opted for MySQL as the backend database for its reliability, performance, and
 
 Visit [http://localhost:3000](http://localhost:3000) in your browser to use the Attendance System.
 
-## Contributing
-Feel free to contribute to the project! Please follow the [contribution guidelines](CONTRIBUTING.md).
+## Contributors
+![Contributors](https://contrib.rocks/image?repo=jose-izarra/attendance_system)
 
 ## License
 This project is licensed under the [MIT License](LICENSE).
